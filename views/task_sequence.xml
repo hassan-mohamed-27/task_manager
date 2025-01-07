@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Task Sequence Configuration
+    
+    This file defines the sequence configuration for task numbering:
+    - Creates a sequence for generating unique task numbers
+    - Configures the format and numbering scheme
+    - Sets up automatic sequence generation
+-->
+<odoo>
+    <!-- Sequence Definition -->
+    <record id="seq_task_manager" model="ir.sequence">
+        <field name="name">Task Manager Sequence</field>
+        <field name="code">task.manager.sequence</field>
+        <field name="prefix">TASK-</field>
+        <field name="padding">5</field>
+    </record>
+</odoo>

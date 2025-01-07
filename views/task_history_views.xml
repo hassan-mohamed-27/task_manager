@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Tree View -->
+        <record id="view_task_state_history_tree" model="ir.ui.view">
+            <field name="name">task.state.history.tree</field>
+            <field name="model">task.manager</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <tree string="Task History" create="false" edit="false" delete="false">
+                    <field name="sequence_number"/>
+                    <field name="name"/>
+                    <field name="user_id" widget="many2many_avatar_user"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="state" widget="badge" 
+                        decoration-danger="state == 'draft'" 
+                        decoration-warning="state == 'in_progress'" 
+                        decoration-success="state == 'done'"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_task_state_history_form" model="ir.ui.view">
+            <field name="name">task.state.history.form</field>
+            <field name="model">task.manager</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <form string="Task History" create="false" edit="false" delete="false">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_task" type="object" class="oe_stat_button" icon="fa-tasks">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_text">Task</span>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="sequence_number" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name" readonly="1"/>
+                                <field name="user_id" widget="many2many_avatar_user" readonly="1"/>
+                                <field name="state" readonly="1" widget="badge" 
+                                    decoration-danger="state == 'draft'" 
+                                    decoration-warning="state == 'in_progress'" 
+                                    decoration-success="state == 'done'"/>
+                            </group>
+                            <group>
+                                <field name="start_date" readonly="1"/>
+                                <field name="end_date" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="State History" name="history">
+                                <field name="history_ids" readonly="1">
+                                    <tree create="false" edit="false" delete="false">
+                                        <field name="date"/>
+                                        <field name="user_id" widget="many2one_avatar"/>
+                                        <field name="old_state"  widget="badge" 
+                                    decoration-danger="old_state == 'draft'" 
+                                    decoration-warning="old_state == 'in_progress'" 
+                                    decoration-success="old_state == 'done'"/>
+                                        <field name="new_state" widget="badge" 
+                                    decoration-danger="new_state == 'draft'" 
+                                    decoration-warning="new_state == 'in_progress'" 
+                                    decoration-success="new_state == 'done'"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_task_state_history_search" model="ir.ui.view">
+            <field name="name">task.state.history.search</field>
+            <field name="model">task.manager</field>
+            <field name="arch" type="xml">
+                <search string="Search Task History">
+                    <field name="name"/>
+                    <field name="sequence_number"/>
+                    <field name="user_id"/>
+                    <filter string="My Tasks" name="my_tasks" domain="[('user_id', 'in', [uid])]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="User" name="group_user" context="{'group_by': 'user_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_task_state_history" model="ir.actions.act_window">
+            <field name="name">Task State History</field>
+            <field name="res_model">task.manager</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('view_task_state_history_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_task_state_history_form')})]"/>
+            <field name="search_view_id" ref="view_task_state_history_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No task history records found
+                </p>
+                <p>
+                    Task history records will be created automatically when tasks are updated.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Items -->
+       
+
+        <menuitem id="menu_task_state_history_all"
+                  name="Task State Changes"
+                  parent="menu_task_management"
+                  action="action_task_state_history"
+                  sequence="1"/>
+    </data>
+</odoo>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    User Task Views
+    
+    This file defines the views for managing tasks from the user perspective:
+    - Form view extension for user tasks
+    - Tree view for user's task list
+    - Kanban view for visual task management
+    - Search view for filtering user tasks
+-->
+<odoo>
+    <!-- Form View Extension -->
+    <!-- Adds task-related fields to the user form -->
+    <record id="view_partner_form_inherit_task" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.task</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- 
+            Notebook page for tasks: 
+            This page contains a many2many field to display tasks associated with the partner.
+            -->
+            <xpath expr="//notebook" position="inside">
+                <page string="User Tasks">
+                    <!-- 
+                    Many2many field for tasks: 
+                    This field displays tasks associated with the partner.
+                    It uses a tree view to display task details.
+                    -->
+                    <field name="task_ids" widget="many2many">
+                        <tree>
+                            <!-- 
+                            Task fields: 
+                            These fields are displayed in the tree view.
+                            -->
+                            <field name="name"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="state"/>
+                            <field name="description"/>
+                        </tree>
+                        <!-- 
+                        Form view for tasks: 
+                        This form view is used to create or edit tasks.
+                        -->
+                        <form>
+                            <group>
+                                <!-- 
+                                Task fields: 
+                                These fields are displayed in the form view.
+                                -->
+                                <field name="name"/>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                <field name="state"/>
+                                <field name="description"/>
+                            </group>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 
+    Action for Partner Tasks: 
+    This action is used to display tasks associated with a partner.
+    It uses a tree and form view to display task details.
+    -->
+    <record id="action_partner_tasks" model="ir.actions.act_window">
+        <field name="name">My Tasks</field>
+        <field name="res_model">task.manager</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('user_id', 'in', [active_id])]</field>
+        <field name="context">{'default_user_id': [(4, active_id)], 'create': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tasks assigned yet!
+            </p>
+            <p>
+                Create a new task or wait for tasks to be assigned to you.
+            </p>
+        </field>
+    </record>
+</odoo>

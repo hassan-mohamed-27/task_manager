@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Report Action -->
+    <record id="action_report_task_progress" model="ir.actions.report">
+        <field name="name">Task Progress Report</field>
+        <field name="model">task.manager</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">task_manger.report_task_progress</field>
+        <field name="report_file">task_manger.report_task_progress</field>
+        <field name="binding_model_id" ref="model_task_manager"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Report Template -->
+    <template id="report_task_progress">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        <div class="row">
+                            <div class="col-12">
+                                <h2 class="text-center mb-4">Task and Progress Report</h2>
+                            </div>
+                        </div>
+                        
+                        <!-- Task Details -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4><t t-esc="doc.sequence_number"/> - <t t-esc="doc.name"/></h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <strong>Description:</strong>
+                                                <p class="text-muted"><t t-esc="doc.description"/></p>
+                                                <strong>Status:</strong>
+                                                <span t-attf-class="badge rounded-pill bg-#{doc.state == 'done' and 'success' or (doc.state == 'in_progress' and 'warning' or 'secondary')}">
+                                                    <t t-esc="dict(doc._fields['state'].selection).get(doc.state)"/>
+                                                </span>
+                                            </div>
+                                            <div class="col-6">
+                                                <strong>Start Date:</strong>
+                                                <p><t t-esc="doc.start_date" t-options='{"widget": "date"}'/></p>
+                                                <strong>End Date:</strong>
+                                                <p><t t-esc="doc.end_date" t-options='{"widget": "date"}'/></p>
+                                                <strong>Assigned To:</strong>
+                                                <p>
+                                                    <t t-foreach="doc.user_id" t-as="user">
+                                                        <span class="badge bg-info me-1"><t t-esc="user.name"/></span>
+                                                    </t>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Progress Entries -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4>Progress History</h4>
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Contact</th>
+                                            <th>Work Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="doc.progress_ids" t-as="progress">
+                                            <tr>
+                                                <td><t t-esc="progress.date" t-options='{"widget": "date"}'/></td>
+                                                <td><t t-esc="progress.user_id.name"/></td>
+                                                <td><t t-esc="progress.work_description"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- State History -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h4>State Changes History</h4>
+                                <table class="table table-bordered table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Changed By</th>
+                                            <th>Previous State</th>
+                                            <th>New State</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="doc.history_ids" t-as="history">
+                                            <tr>
+                                                <td><t t-esc="history.date" t-options='{"widget": "datetime"}'/></td>
+                                                <td><t t-esc="history.user_id.name"/></td>
+                                                <td>
+                                                    <span t-attf-class="badge rounded-pill bg-#{history.old_state == 'done' and 'success' or (history.old_state == 'in_progress' and 'warning' or 'secondary')}">
+                                                        <t t-esc="dict(history._fields['old_state'].selection).get(history.old_state)"/>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span t-attf-class="badge rounded-pill bg-#{history.new_state == 'done' and 'success' or (history.new_state == 'in_progress' and 'warning' or 'secondary')}">
+                                                        <t t-esc="dict(history._fields['new_state'].selection).get(history.new_state)"/>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo> 

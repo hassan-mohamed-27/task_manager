@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_task_manager_user,task.manager.user,model_task_manager,base.group_user,1,1,1,1
+access_task_manager_manager,task.manager.manager,model_task_manager,base.group_partner_manager,1,1,1,1
+access_task_progress_user,task.progress,model_task_progress,base.group_user,1,1,1,1
+access_task_progress_manager,task.progress,model_task_progress,base.group_system,1,1,1,1
+access_task_history_user,task.history,model_task_history,base.group_user,1,1,1,0
+access_task_history_manager,task.history,model_task_history,base.group_system,1,1,1,1
